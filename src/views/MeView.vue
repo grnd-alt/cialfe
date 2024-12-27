@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import { getMe, createNote,getNotes } from '@/api/api'
+import { getMe, createPost, getPosts } from '@/api/api'
+import { type Post } from '@/types/Post'
+import PostCard from '@/components/posts/PostCard.vue'
 import { ref, onUnmounted } from 'vue'
 
 const me = ref()
 const countdown = ref<string>('')
 
-const noteTitle = ref<string>('')
-const noteContent = ref<string>('')
-const notes = ref<Array<object>>([])
+const postContent = ref<string>('')
+const postFile = ref<File | null>(null)
+const posts = ref<Array<Post>>([])
 
-function loadNotes() {
-  getNotes().then((res) => (notes.value = res.data))
+function loadPosts() {
+  getPosts().then((res) => (posts.value = res.data))
 }
-loadNotes()
+loadPosts()
 
 function onSubmit(event: Event) {
   event.preventDefault()
-  createNote({ title: noteTitle.value, content: noteContent.value }).then(
-    (res) => {
-      if (!notes.value) {
-        notes.value = []
-      }
-      notes.value.unshift(res.data)
+  createPost({ content: postContent.value, file: postFile.value! }).then((res) => {
+    if (!posts.value) {
+      posts.value = []
     }
-  )
+    posts.value.unshift(res.data)
+  })
 }
 
 getMe().then((res) => {
@@ -63,6 +63,14 @@ onUnmounted(() => {
     clearInterval(intervalId)
   }
 })
+
+const setFile = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    postFile.value = file
+  }
+}
 </script>
 
 <template>
@@ -72,26 +80,32 @@ onUnmounted(() => {
       <p v-if="me && me.preferred_username">Hello, {{ me.preferred_username }}!</p>
       <p v-if="countdown">{{ countdown }}</p>
       <form @submit="onSubmit">
-        <label for="note-tile">Title</label>
-        <input type="text" id="note-title" v-model="noteTitle" required />
-        <label for="note-tile">Content</label>
-        <input type="text" id="note-content" v-model="noteContent" required />
+        <label for="post-content">Content</label>
+        <input type="text" id="post-content" v-model="postContent" required />
+        <label for="post-file">Content</label>
+        <input type="file" id="post-file" v-on:change="setFile" required />
         <input type="submit" value="submit" />
       </form>
-      <div class="note" v-for="note in notes" :key="note.ID">
-        <h3>{{ note.Title }}</h3>
-        <span>{{ note.Content }}</span>
+      <div class="posts">
+        <div class="post" v-for="post in posts" :key="post.ID">
+          <PostCard :post="post" />
+        </div>
       </div>
     </div>
   </main>
 </template>
 <style scoped>
-.note {
-  margin-top: 1rem;
-  border: 1px solid #ccc;
-  h3{
-    margin: 0;
-    padding: 0.5rem;
+.posts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 100%;
+  .post{
+    display: flex;
+    flex-direction: column;
+    margin: 2rem;
+    width: min(400px, 100%);
   }
 }
 </style>

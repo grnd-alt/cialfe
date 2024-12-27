@@ -4,7 +4,6 @@ import { login, getToken, refresh, isAuthenticated } from '../services/keycloak'
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:8000/api/',
   timeout: 5000,
-  headers: { 'Content-Type': 'application/json' },
 })
 
 function ensureAuth(): Promise<boolean> {
@@ -27,23 +26,23 @@ function getMe(): Promise<AxiosResponse> {
   })
 }
 
-function createNote(note: { title: string; content: string }): Promise<AxiosResponse> {
+function createPost(post: { content: string; file: File }): Promise<AxiosResponse> {
   return new Promise((resolve) => {
     ensureAuth().then(() => {
-      console.log(getToken())
-      console.log("THIS WAS THE TOKEN")
       axiosInstance
-        .post('notes/create', note, { headers: { Authorization: `Bearer ${getToken()}` } })
+        .post('posts/create', post, {
+          headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'multipart/form-data' },
+        })
         .then((res) => resolve(res))
     })
   })
 }
 
-function getNotes(): Promise<AxiosResponse> {
+function getPosts(): Promise<AxiosResponse> {
   return new Promise((resolve) => {
     ensureAuth().then(() => {
       axiosInstance
-        .get('notes', { headers: { Authorization: `Bearer ${getToken()}` } })
+        .get('posts', { headers: { Authorization: `Bearer ${getToken()}` } })
         .then((res) => resolve(res))
     })
   })
@@ -53,4 +52,4 @@ function getHello() {
   return axiosInstance.get('hello')
 }
 
-export { getMe, getHello, createNote,getNotes }
+export { getMe, getHello, createPost, getPosts }
