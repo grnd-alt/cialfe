@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+// @ts-expect-error lib has no types
 import SVGIcon from '@jamescoyle/vue-icon'
-import {mdiAccount} from '@mdi/js'
-import { isAuthenticated, login, logout, keycloak } from './services/keycloak';
+import { mdiAccount } from '@mdi/js'
+import { isAuthenticated, login, logout, keycloak } from './services/keycloak'
 </script>
 
 <template>
   <header>
     <div class="account-section">
       <a :href="keycloak.createAccountUrl()">
-        <SVGIcon type="mdi" :path="mdiAccount" :size="32"/>
+        <SVGIcon type="mdi" :path="mdiAccount" :size="32" />
       </a>
       <button v-if="!isAuthenticated()" @click="login">Login</button>
       <button v-else @click="logout">Logout</button>
@@ -28,5 +28,4 @@ import { isAuthenticated, login, logout, keycloak } from './services/keycloak';
   <RouterView />
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
