@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getMe, createPost, getPosts } from '@/api/api'
-import { type Post } from '@/types/Post'
-import PostCard from '@/components/posts/PostCard.vue'
+import { type PostData, type Comment } from '@/types/Post'
+import FeedComponent from '@/components/FeedComponent.vue'
 import { ref, onUnmounted } from 'vue'
 
 const me = ref()
@@ -9,12 +9,24 @@ const countdown = ref<string>('')
 
 const postContent = ref<string>('')
 const postFile = ref<File | null>(null)
-const posts = ref<Array<Post>>([])
+const posts = ref<Array<PostData>>([])
+const page = ref<number>(0)
+const endReached = ref<boolean>(false)
 
 function loadPosts() {
-  getPosts().then((res) => (posts.value = res.data))
+  getPosts(me.value.preferred_username, 0).then((res) => (posts.value = res.data))
 }
-loadPosts()
+
+function expandPosts() {
+  page.value++
+  getPosts(me.value.preferred_username, page.value).then((res) => {
+    if (!res.data) {
+      endReached.value = true
+      return
+    }
+    posts.value = posts.value.concat(res.data)
+  })
+}
 
 function onSubmit(event: Event) {
   event.preventDefault()
@@ -22,13 +34,14 @@ function onSubmit(event: Event) {
     if (!posts.value) {
       posts.value = []
     }
-    posts.value.unshift(res.data)
+    posts.value.unshift({ Post: res.data, Comments: [] })
   })
 }
 
 getMe().then((res) => {
   me.value = res.data
   startCountdown()
+  loadPosts()
 })
 
 let intervalId: number | null = null
@@ -71,6 +84,20 @@ const setFile = (event: Event) => {
     postFile.value = file
   }
 }
+
+const commentAdded = (comment: Comment) => {
+  const postIndex = posts.value.findIndex((post) => post.Post.ID === comment.PostID)
+  if (postIndex !== -1) {
+    if (!posts.value[postIndex].Comments) {
+      posts.value[postIndex].Comments = []
+    }
+    posts.value[postIndex].Comments.unshift(comment)
+  }
+}
+
+const scrolledDown = () => {
+  expandPosts()
+}
 </script>
 
 <template>
@@ -86,26 +113,14 @@ const setFile = (event: Event) => {
         <input type="file" id="post-file" v-on:change="setFile" required />
         <input type="submit" value="submit" />
       </form>
-      <div class="posts">
-        <div class="post" v-for="post in posts" :key="post.ID">
-          <PostCard :post="post" />
-        </div>
-      </div>
+      <FeedComponent
+        :all-loaded="endReached"
+        :posts="posts"
+        @end-reached="scrolledDown"
+        @comment-created="commentAdded"
+      />
     </div>
   </main>
 </template>
 <style scoped>
-.posts {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-  width: 100%;
-  .post{
-    display: flex;
-    flex-direction: column;
-    margin: 2rem;
-    width: min(400px, 100%);
-  }
-}
 </style>

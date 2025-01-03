@@ -9,7 +9,7 @@ import { isAuthenticated, login, logout, keycloak } from './services/keycloak'
 <template>
   <header>
     <div class="account-section">
-      <a :href="keycloak.createAccountUrl()">
+      <a :href="keycloak.createAccountUrl({redirectUri:$router.currentRoute.value.fullPath})">
         <SVGIcon type="mdi" :path="mdiAccount" :size="32" />
       </a>
       <button v-if="!isAuthenticated()" @click="login">Login</button>
