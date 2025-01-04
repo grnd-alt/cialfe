@@ -42,14 +42,26 @@ function getPosts(username: string, page: number): Promise<AxiosResponse> {
   return new Promise((resolve) => {
     ensureAuth().then(() => {
       axiosInstance
-        .get(`posts/${username}`, { params: { page }, headers: { Authorization: `Bearer ${getToken()}` } })
+        .get(`posts/${username}`, {
+          params: { page },
+          headers: { Authorization: `Bearer ${getToken()}` },
+        })
+        .then((res) => resolve(res))
+    })
+  })
+}
+
+function getLatest(page: number): Promise<AxiosResponse> {
+  return new Promise((resolve) => {
+    ensureAuth().then(() => {
+      axiosInstance
+        .get('posts', { params: { page }, headers: { Authorization: `Bearer ${getToken()}` } })
         .then((res) => resolve(res))
     })
   })
 }
 
 function createComment(content: string, postId: string): Promise<AxiosResponse> {
-  console.log(postId)
   return new Promise((resolve) => {
     ensureAuth().then(() => {
       axiosInstance
@@ -67,4 +79,4 @@ function getHello() {
   return axiosInstance.get('hello')
 }
 
-export { getMe, getHello, createPost, getPosts, createComment }
+export { getLatest, getMe, getHello, createPost, getPosts, createComment }
