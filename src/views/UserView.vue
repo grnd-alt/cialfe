@@ -14,7 +14,7 @@ const allLoaded = ref(false)
 const expandPosts = () => {
   if (typeof route.params.username === 'string') {
     getPosts(route.params.username, pageNumber.value).then((res) => {
-      if (!res.data) {
+      if (!res.data || res.data.length === 0) {
         allLoaded.value = true
         return
       }

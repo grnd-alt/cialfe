@@ -20,7 +20,7 @@ function loadPosts() {
 function expandPosts() {
   page.value++
   getPosts(me.value.preferred_username, page.value).then((res) => {
-    if (!res.data) {
+    if (!res.data || res.data.length === 0) {
       endReached.value = true
       return
     }

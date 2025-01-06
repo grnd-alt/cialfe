@@ -11,7 +11,7 @@ const allLoaded = ref(false)
 
 const expandPosts = () => {
   getLatest(pageNumber.value).then((res) => {
-    if (!res.data) {
+    if (!res.data || res.data.length === 0) {
       allLoaded.value = true
       return
     }
