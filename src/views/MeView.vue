@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { getMe, createPost, getPosts } from '@/api/api'
+import { createPost, getPosts } from '@/api/api'
 import { type PostData, type Comment } from '@/types/Post'
 import FeedComponent from '@/components/FeedComponent.vue'
+import { useMeStore, usePostStore } from '../stores/counter'
 import { ref, onUnmounted } from 'vue'
+
+const postStore = usePostStore()
+const meStore = useMeStore()
 
 const me = ref()
 const countdown = ref<string>('')
@@ -13,9 +17,14 @@ const posts = ref<Array<PostData>>([])
 const page = ref<number>(0)
 const endReached = ref<boolean>(false)
 
-function loadPosts() {
-  getPosts(me.value.preferred_username, 0).then((res) => (posts.value = res.data))
-}
+postStore.getMePosts().then((res) => (
+  posts.value = res
+))
+
+meStore.getMe().then((res) => {
+  me.value = res
+  startCountdown()
+})
 
 function expandPosts() {
   page.value++
@@ -38,20 +47,15 @@ function onSubmit(event: Event) {
   })
 }
 
-getMe().then((res) => {
-  me.value = res.data
-  startCountdown()
-  loadPosts()
-})
-
-let intervalId: number | null = null
-
 function startCountdown() {
   if (me.value && me.value.exp) {
     updateCountdown()
     intervalId = setInterval(updateCountdown, 1000)
   }
 }
+
+let intervalId: number | null = null
+
 
 function updateCountdown() {
   if (me.value && me.value.exp) {
@@ -98,6 +102,12 @@ const commentAdded = (comment: Comment) => {
 const scrolledDown = () => {
   expandPosts()
 }
+const postDeleted =(id:string) => {
+  postStore.removePost(id)
+  postStore.getMePosts().then((res) => (
+    posts.value = res
+  ))
+}
 </script>
 
 <template>
@@ -118,6 +128,7 @@ const scrolledDown = () => {
         :posts="posts"
         @end-reached="scrolledDown"
         @comment-created="commentAdded"
+        @post-deleted="postDeleted"
       />
     </div>
   </main>

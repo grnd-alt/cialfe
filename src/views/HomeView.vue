@@ -17,7 +17,6 @@ const expandPosts = () => {
     }
     pageNumber.value++
     posts.value = posts.value.concat(res.data)
-    console.log(posts.value)
   })
 }
 

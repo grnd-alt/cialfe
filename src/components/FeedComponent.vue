@@ -2,7 +2,7 @@
 import { type PostData, type Comment } from '@/types/Post'
 import PostCard from '@/components/posts/PostCard.vue'
 import { vElementVisibility } from '@vueuse/components'
-const emit = defineEmits(['comment-created', 'end-reached'])
+const emit = defineEmits(['comment-created', 'end-reached', 'post-deleted'])
 const { posts, allLoaded } = defineProps({
   posts: {
     type: Array as () => Array<PostData>,
@@ -23,12 +23,17 @@ const onElementVisibility = (state: boolean) => {
     emit('end-reached')
   }
 }
+
+const postDeleted = (id:string) => {
+  emit('post-deleted',id)
+}
+
 </script>
 
 <template>
   <div class="feed">
     <div class="post" v-for="(post, index) in posts" :key="post.Post.ID">
-      <PostCard :post="post.Post" :comments="post.Comments" @comment-created="addComment" />
+      <PostCard :post="post.Post" :comments="post.Comments" @comment-created="addComment" @post-deleted="() => postDeleted(post.Post.ID)"/>
       <div v-if="index >= posts.length - 2">
         <div v-element-visibility="onElementVisibility"></div>
       </div>

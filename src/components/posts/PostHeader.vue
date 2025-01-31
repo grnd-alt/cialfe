@@ -1,25 +1,41 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-const { username, content, createdAt } = defineProps<{
-  username: string
-  content: string
-  createdAt: string
-}>()
+const { username, content, createdAt, postId } = defineProps({
+  username: { type: String, required: true },
+  content: { type: String, required: true },
+  createdAt: { type: String, required: true },
+  postId: { type: String, required: true },
+})
 import { useTimeAgo } from '@vueuse/core'
+import DotsMenuButton from '../ui/DotsMenuButton.vue'
+import PostMenu from './PostMenu.vue'
+
 const timeago = useTimeAgo(createdAt)
 const maxContentLength = 40
 const contentToLong = content.length > maxContentLength
 const showFullContent = ref(!contentToLong)
 
+const emit = defineEmits(['post-deleted'])
+
 const toggleContent = () => {
   showFullContent.value = !showFullContent.value
+}
+
+const showMenu = ref(false)
+const hideMenu = () => {
+  emit('post-deleted', postId)
 }
 </script>
 <template>
   <div class="post-header">
     <div class="header-info">
-      <span class="username">{{ username }}</span>
-      <span class="time">{{ timeago }}</span>
+      <div class="creator-info">
+        <span class="username">{{ username }}</span>
+        <span class="time">{{ timeago }}</span>
+      </div>
+      <DotsMenuButton :hide-menu="showMenu">
+        <PostMenu :post-id="postId" @post-deleted="hideMenu"/>
+      </DotsMenuButton>
     </div>
     <span class="content" :class="{ truncated: !showFullContent }">
       {{ contentToLong && !showFullContent ? content.slice(0, maxContentLength) + '...' : content }}
@@ -32,16 +48,16 @@ const toggleContent = () => {
 </template>
 
 <style scoped>
-
 .header-info {
   text-align: bottom;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 0.5rem;
 }
 
 .username {
-  margin-right: .5rem;
+  margin-right: 0.5rem;
   font-size: 1.2rem;
   font-weight: bold;
   color: #333;

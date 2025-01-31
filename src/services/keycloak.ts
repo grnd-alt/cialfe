@@ -1,7 +1,7 @@
 import Keycloak, { type KeycloakOnLoad, type KeycloakPkceMethod } from 'keycloak-js'
 
 const keycloakConfig = {
-  url: 'https://auth.belakkaf.net/',
+  url: 'http://localhost:8080',
   realm: 'goapp',
   clientId: 'testapplication',
 }

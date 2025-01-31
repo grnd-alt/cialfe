@@ -5,7 +5,7 @@ import { createComment } from '../../api/api'
 import { defineProps } from 'vue'
 import { ref } from 'vue';
 
-const emit = defineEmits(['comment-created'])
+const emit = defineEmits(['comment-created', 'post-deleted'])
 const { post,comments } = defineProps({
   post: {
     type: Object as () => Post,
@@ -27,6 +27,9 @@ const addCommentHandle = (event: Event) => {
     commentText.value = ''
   })
 }
+const postDeleted = () => {
+  emit("post-deleted")
+}
 </script>
 <template>
   <div class="post-card">
@@ -35,13 +38,15 @@ const addCommentHandle = (event: Event) => {
       :username="post.Username"
       :content="post.Content"
       :created-at="post.CreatedAt"
+      :post-id="post.ID"
+      @post-deleted="postDeleted"
     />
     <div class="post-card__image">
       <img :src="post.Filepath" alt="post image not loaded" />
     </div>
     <form class="comment-form" v-on:submit="addCommentHandle">
       <input type="text" v-model="commentText" placeholder="Write a comment..." class="comment-input" />
-      <button type="submit" class="comment-submit">Submit</button>
+      <button type="submit" class="comment-submit">send</button>
     </form>
     <div class="comments">
       <div class="comment" v-for="comment in comments" :key="comment.ID">
@@ -54,6 +59,19 @@ const addCommentHandle = (event: Event) => {
 <style scoped>
 .header {
   padding-bottom: 0.5rem;
+  padding-inline: 8px;
+}
+
+.comment-form{
+  display: flex;
+  justify-content: space-evenly;
+  padding-top: 8px;
+  input{
+    flex-grow: 1;
+  }
+}
+.comments, .comment-form{
+  width: 100%;
   padding-inline: 8px;
 }
 .post-card {
