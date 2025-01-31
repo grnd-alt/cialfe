@@ -34,7 +34,10 @@ export const usePostStore = defineStore('posts',{
     },
     removePost(id: string) {
       this.mePosts = this.mePosts.filter((post) => post.Post.ID !== id)
-    }
+    },
+    addPost(post: PostData) {
+      this.mePosts.unshift(post)
+    },
   }
 }
 )

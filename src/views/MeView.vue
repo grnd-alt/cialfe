@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { createPost, getPosts } from '@/api/api'
+import { getPosts } from '@/api/api'
 import { type PostData, type Comment } from '@/types/Post'
 import FeedComponent from '@/components/FeedComponent.vue'
+import CreatePost from '@/components/posts/CreatePost.vue'
 import { useMeStore, usePostStore } from '../stores/counter'
 import { ref, onUnmounted } from 'vue'
 
@@ -11,15 +12,11 @@ const meStore = useMeStore()
 const me = ref()
 const countdown = ref<string>('')
 
-const postContent = ref<string>('')
-const postFile = ref<File | null>(null)
 const posts = ref<Array<PostData>>([])
 const page = ref<number>(0)
 const endReached = ref<boolean>(false)
 
-postStore.getMePosts().then((res) => (
-  posts.value = res
-))
+postStore.getMePosts().then((res) => (posts.value = res))
 
 meStore.getMe().then((res) => {
   me.value = res
@@ -37,16 +34,6 @@ function expandPosts() {
   })
 }
 
-function onSubmit(event: Event) {
-  event.preventDefault()
-  createPost({ content: postContent.value, file: postFile.value! }).then((res) => {
-    if (!posts.value) {
-      posts.value = []
-    }
-    posts.value.unshift({ Post: res.data, Comments: [] })
-  })
-}
-
 function startCountdown() {
   if (me.value && me.value.exp) {
     updateCountdown()
@@ -55,7 +42,6 @@ function startCountdown() {
 }
 
 let intervalId: number | null = null
-
 
 function updateCountdown() {
   if (me.value && me.value.exp) {
@@ -81,14 +67,6 @@ onUnmounted(() => {
   }
 })
 
-const setFile = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
-  if (file) {
-    postFile.value = file
-  }
-}
-
 const commentAdded = (comment: Comment) => {
   const postIndex = posts.value.findIndex((post) => post.Post.ID === comment.PostID)
   if (postIndex !== -1) {
@@ -102,11 +80,9 @@ const commentAdded = (comment: Comment) => {
 const scrolledDown = () => {
   expandPosts()
 }
-const postDeleted =(id:string) => {
+const postDeleted = (id: string) => {
   postStore.removePost(id)
-  postStore.getMePosts().then((res) => (
-    posts.value = res
-  ))
+  postStore.getMePosts().then((res) => (posts.value = res))
 }
 </script>
 
@@ -115,14 +91,7 @@ const postDeleted =(id:string) => {
     <div>
       <h1>Me</h1>
       <p v-if="me && me.preferred_username">Hello, {{ me.preferred_username }}!</p>
-      <p v-if="countdown">{{ countdown }}</p>
-      <form @submit="onSubmit">
-        <label for="post-content">Content</label>
-        <input type="text" id="post-content" v-model="postContent" required />
-        <label for="post-file">Content</label>
-        <input type="file" id="post-file" v-on:change="setFile" required />
-        <input type="submit" value="submit" />
-      </form>
+      <CreatePost />
       <FeedComponent
         :all-loaded="endReached"
         :posts="posts"
@@ -133,5 +102,4 @@ const postDeleted =(id:string) => {
     </div>
   </main>
 </template>
-<style scoped>
-</style>
+<style scoped></style>
