@@ -5,6 +5,8 @@ import { createComment } from '../../api/api'
 import CommentComponent from './CommentComponent.vue'
 import { ref } from 'vue';
 
+
+
 const emit = defineEmits(['comment-created', 'post-deleted'])
 const { post,comments } = defineProps({
   post: {
@@ -19,6 +21,7 @@ const { post,comments } = defineProps({
 })
 
 const commentText = ref<string>('')
+const imageLoaded = ref<boolean>(false)
 
 const addCommentHandle = (event: Event) => {
   event.preventDefault()
@@ -42,7 +45,8 @@ const postDeleted = () => {
       @post-deleted="postDeleted"
     />
     <div class="post-card__image">
-      <img :src="post.Filepath" alt="post image not loaded" />
+      <div v-if="!imageLoaded" class="spinner"></div>
+      <img :src="post.Filepath" alt="post image not loaded" @load="imageLoaded = true" />
     </div>
     <form class="comment-form" v-on:submit="addCommentHandle">
       <input type="text" v-model="commentText" placeholder="Write a comment..." class="comment-input" />
@@ -57,6 +61,24 @@ const postDeleted = () => {
 </template>
 
 <style scoped>
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #000;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-inline: auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 .header {
   padding-bottom: 0.5rem;
   padding-inline: 8px;
