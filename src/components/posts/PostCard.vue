@@ -2,7 +2,7 @@
 import { type Post, type Comment } from '../../types/Post'
 import PostHeader from './PostHeader.vue'
 import { createComment } from '../../api/api'
-import { defineProps } from 'vue'
+import CommentComponent from './CommentComponent.vue'
 import { ref } from 'vue';
 
 const emit = defineEmits(['comment-created', 'post-deleted'])
@@ -46,11 +46,11 @@ const postDeleted = () => {
     </div>
     <form class="comment-form" v-on:submit="addCommentHandle">
       <input type="text" v-model="commentText" placeholder="Write a comment..." class="comment-input" />
-      <button type="submit" class="comment-submit">send</button>
+      <button :disabled="commentText === ''" type="submit" class="comment-submit">send</button>
     </form>
     <div class="comments">
-      <div class="comment" v-for="comment in comments" :key="comment.ID">
-        <span>{{ comment.Content }}</span>
+      <div v-for="comment in comments" :key="comment.ID">
+        <CommentComponent :comment="comment" />
       </div>
     </div>
   </div>
@@ -70,7 +70,10 @@ const postDeleted = () => {
     flex-grow: 1;
   }
 }
-.comments, .comment-form{
+.comments{
+  margin-top: 4px;
+}
+.comment-form{
   width: 100%;
   padding-inline: 8px;
 }

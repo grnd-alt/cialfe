@@ -21,6 +21,8 @@ const toggleContent = () => {
   showFullContent.value = !showFullContent.value
 }
 
+const userLink = `/user/${username}`
+
 const showMenu = ref(false)
 const hideMenu = () => {
   emit('post-deleted', postId)
@@ -30,7 +32,10 @@ const hideMenu = () => {
   <div class="post-header">
     <div class="header-info">
       <div class="creator-info">
-        <span class="username">{{ username }}</span>
+      <RouterLink class="username" :to="userLink">
+        {{ username }}
+       </RouterLink>
+
         <span class="time">{{ timeago }}</span>
       </div>
       <DotsMenuButton :hide-menu="showMenu">
@@ -57,6 +62,7 @@ const hideMenu = () => {
 }
 
 .username {
+  text-decoration: none;
   margin-right: 0.5rem;
   font-size: 1.2rem;
   font-weight: bold;

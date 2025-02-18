@@ -2,7 +2,7 @@
 import { mdiDotsVertical } from '@mdi/js'
 // @ts-expect-error lib has no types
 import SVGIcon from '@jamescoyle/vue-icon'
-import { ref, defineProps, watch } from 'vue'
+import { ref, watch } from 'vue'
 
 const { hideMenu } = defineProps({
   hideMenu: {
