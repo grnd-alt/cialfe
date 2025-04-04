@@ -16,11 +16,11 @@ const posts = ref<Array<PostData>>([])
 const page = ref<number>(0)
 const endReached = ref<boolean>(false)
 
-postStore.getMePosts().then((res) => (posts.value = res))
-
 meStore.getMe().then((res) => {
   me.value = res
   startCountdown()
+  postStore.getMePosts().then((res) => (posts.value = res))
+  meStore.getMe()
 })
 
 function expandPosts() {

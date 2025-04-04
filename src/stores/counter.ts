@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { getMe, getPosts } from '@/api/api'
+import { getMe, getPosts, updateBrowserData } from '@/api/api'
 import type { PostData } from '@/types/Post'
 
 type Me = {
@@ -10,8 +10,22 @@ type Me = {
   exp: number,
 }
 
+export const useSubscriptionStore = defineStore('subscription', {
+  state: () => ({ subscription: null as PushSubscription | null }),
+  actions: {
+    setSubscription(subscription: PushSubscription) {
+      this.subscription = subscription
+      updateBrowserData(subscription)
+    },
+    getSubscription(): PushSubscription | null {
+      return this.subscription
+    }
+  },
+})
+
+
 export const useMeStore = defineStore("me", {
-  state: () => ({ me: undefined as Me | undefined }),
+  state: () => ({ me: null as Me | null }),
   actions: {
     async getMe():Promise<Me | undefined> {
       if (!this.me) {

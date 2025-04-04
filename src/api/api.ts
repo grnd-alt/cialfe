@@ -11,11 +11,35 @@ async function ensureAuth(): Promise<boolean> {
     login()
   }
   try {
-        return await refresh()
-    } catch (error) {
-        login()
-        return await Promise.reject(error)
-    }
+    return await refresh()
+  } catch (error) {
+    login()
+    return await Promise.reject(error)
+  }
+}
+
+function getVapiKey(): Promise<AxiosResponse>{
+  return new Promise((resolve) => {
+    axiosInstance
+      .get('vapid')
+      .then((res) => {
+        resolve(res)
+      })
+  })
+}
+
+function updateBrowserData(subscription: PushSubscription): Promise<AxiosResponse> {
+  return new Promise((resolve) => {
+    ensureAuth().then(() => {
+      axiosInstance
+        .post(
+          'users/update-browser-data',
+          { subscription },
+          { headers: { Authorization: `Bearer ${getToken()}` } },
+        )
+        .then((res) => resolve(res))
+    })
+  })
 }
 
 function getMe(): Promise<AxiosResponse> {
@@ -26,6 +50,30 @@ function getMe(): Promise<AxiosResponse> {
         .then((res) => {
           resolve(res)
         })
+    })
+  })
+}
+
+function getUser(userId: string): Promise<AxiosResponse> {
+  return new Promise((resolve) => {
+    ensureAuth().then(() => {
+      axiosInstance
+        .get(`users/${userId}`, { headers: { Authorization: `Bearer ${getToken()}` } })
+        .then((res) => resolve(res))
+    })
+  })
+}
+
+function follow(userName: string, subscription: PushSubscription | null): Promise<AxiosResponse> {
+  return new Promise((resolve) => {
+    ensureAuth().then(() => {
+      axiosInstance
+        .post(
+          `users/follow/${userName}`,
+          { subscription: subscription || {} },
+          { headers: { Authorization: `Bearer ${getToken()}` } },
+        )
+        .then((res) => resolve(res))
     })
   })
 }
@@ -93,4 +141,16 @@ function getHello() {
   return axiosInstance.get('hello')
 }
 
-export { getLatest, getMe, getHello, createPost, getPosts, createComment, deletePost}
+export {
+  getLatest,
+  getMe,
+  getHello,
+  createPost,
+  getPosts,
+  createComment,
+  deletePost,
+  getUser,
+  follow,
+  updateBrowserData,
+  getVapiKey,
+}

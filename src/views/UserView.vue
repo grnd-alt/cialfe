@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import { getPosts } from '@/api/api'
+import { getPosts, getUser,follow } from '@/api/api'
 import { useRoute } from 'vue-router'
 import { type PostData, type Comment } from '@/types/Post'
 import { ref } from 'vue'
 
 import FeedComponent from '@/components/FeedComponent.vue'
+import type { User } from '@/types/User'
+import { useSubscriptionStore } from '@/stores/counter'
 
 const route = useRoute()
 const pageNumber = ref(0)
 const posts = ref<Array<PostData>>([])
+const user = ref<User>()
 const allLoaded = ref(false)
+
+const subStore = useSubscriptionStore()
 
 const expandPosts = () => {
   if (typeof route.params.username === 'string') {
@@ -26,6 +31,12 @@ const expandPosts = () => {
 
 expandPosts()
 
+if (typeof route.params.username === 'string') {
+  getUser(route.params.username).then((res) => {
+    user.value = res.data
+  })
+}
+
 const commentAdded = (comment: Comment) => {
   const postIndex = posts.value.findIndex((post) => post.Post.ID === comment.PostID)
   if (postIndex !== -1) {
@@ -39,12 +50,12 @@ const commentAdded = (comment: Comment) => {
 <template>
   <div>
     {{ $route.params.username }}
-    <FeedComponent
-      :all-loaded="allLoaded"
-      :posts="posts"
-      @end-reached="expandPosts"
-      @comment-created="commentAdded"
-    />
+    Following: {{ user?.following }}
+    Followers: {{ user?.followers || 0 }}
+    <button @click="() => follow(user!.username,subStore.getSubscription())">
+      Follow
+    </button>
+    <FeedComponent :all-loaded="allLoaded" :posts="posts" @end-reached="expandPosts" @comment-created="commentAdded" />
   </div>
 </template>
 
