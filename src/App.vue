@@ -4,31 +4,8 @@ import { RouterLink, RouterView } from 'vue-router'
 import SVGIcon from '@jamescoyle/vue-icon'
 import { mdiAccount } from '@mdi/js'
 import { isAuthenticated, login, logout, keycloak } from './services/keycloak'
-import { useSubscriptionStore } from './stores/counter'
-import { getVapiKey } from './api/api'
+import NotificationsButton from './components/NotificationsButton.vue'
 
-window.Notification.requestPermission()
-
-const subStore = useSubscriptionStore()
-
-if ('serviceWorker' in navigator && 'PushManager' in window) {
-  getVapiKey().then((res) => {
-    if (res.data && res.data.publicKey) {
-      navigator.serviceWorker.register('/service-worker.js', { type: 'module' }).then(serviceWorkerRegistration => {
-        serviceWorkerRegistration.pushManager.subscribe({ applicationServerKey: res.data.publicKey, userVisibleOnly: true}).then((subscription) => {
-          subStore.setSubscription(subscription)
-        })
-      }).catch(error => {
-        console.error('An error occurred while registering the service worker.');
-        console.error(error);
-      });
-      navigator.serviceWorker.controller?.postMessage({ action: 'PING' })
-
-    }
-  })
-} else {
-  console.error('Browser does not support service workers or push messages.');
-}
 </script>
 
 <template>
@@ -39,6 +16,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
       </a>
       <button v-if="!isAuthenticated()" @click="login">Login</button>
       <button v-else @click="logout">Logout</button>
+      <NotificationsButton />
     </div>
 
     <div class="wrapper">
