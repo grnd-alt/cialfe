@@ -9,20 +9,16 @@ const notificationPermission = ref(window.Notification.permission)
 const subStore = useSubscriptionStore()
 const error = ref<string | null>(null)
 
-const exchangeSubscription = () => {
+const exchangeSubscription = async () => {
   if ('serviceWorker' in navigator && 'PushManager' in window) {
-    navigator.serviceWorker.register('/service-worker.js', { type: 'module' }).then(serviceWorkerRegistration => {
-      getVapiKey().then((res) => {
-        if (res.data && res.data.publicKey) {
-          serviceWorkerRegistration.pushManager.subscribe({ applicationServerKey: res.data.publicKey, userVisibleOnly: true }).then((subscription) => {
-            subStore.setSubscription(subscription)
-          })
-        }
-      })
-    }).catch(err => {
-      error.value = 'Service worker registration failed: ' + err
+    const registration = await navigator.serviceWorker.ready;
+    getVapiKey().then((res) => {
+      if (res.data && res.data.publicKey) {
+        registration.pushManager.subscribe({ applicationServerKey: res.data.publicKey, userVisibleOnly: true }).then((subscription) => {
+          subStore.setSubscription(subscription)
+        })
+      }
     })
-    navigator.serviceWorker.controller?.postMessage({ action: 'PING' })
   } else {
     error.value = 'Browser does not support service workers or push messages.'
   }
@@ -33,15 +29,15 @@ if (notificationPermission.value === 'granted') {
 }
 
 const enableNotifications = () => {
-    window.Notification.requestPermission().then(permission => {
-      notificationPermission.value = permission
-      if (permission === 'granted') {
-        exchangeSubscription()
-      } else {
-        error.value = 'Notification permission denied.'
-      }
-    })
-  }
+  window.Notification.requestPermission().then(permission => {
+    notificationPermission.value = permission
+    if (permission === 'granted') {
+      exchangeSubscription()
+    } else {
+      error.value = 'Notification permission denied.'
+    }
+  })
+}
 </script>
 <template>
   <button v-if="notificationPermission !== 'granted'" @click="enableNotifications"> Enable notifications</button>
