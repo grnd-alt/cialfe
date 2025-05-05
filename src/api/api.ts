@@ -77,6 +77,19 @@ function follow(userName: string, subscription: PushSubscription | null): Promis
     })
   })
 }
+function unfollow(userName: string): Promise<AxiosResponse> {
+  return new Promise((resolve) => {
+    ensureAuth().then(() => {
+      axiosInstance
+        .post(
+          `users/unfollow/${userName}`,
+          {},
+          { headers: { Authorization: `Bearer ${getToken()}` } },
+        )
+        .then((res) => resolve(res))
+    })
+  })
+}
 
 function createPost(post: { content: string; file: File }): Promise<AxiosResponse> {
   return new Promise((resolve) => {
@@ -151,6 +164,7 @@ export {
   deletePost,
   getUser,
   follow,
+  unfollow,
   updateBrowserData,
   getVapiKey,
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getPosts, getUser,follow } from '@/api/api'
+import { getPosts, getUser,follow,unfollow } from '@/api/api'
 import { useRoute } from 'vue-router'
 import { type PostData, type Comment } from '@/types/Post'
 import { ref } from 'vue'
@@ -50,10 +50,13 @@ const commentAdded = (comment: Comment) => {
 <template>
   <div>
     {{ $route.params.username }}
-    Following: {{ user?.following }}
+    Following: {{ user?.followingcount }}
     Followers: {{ user?.followers || 0 }}
-    <button @click="() => follow(user!.username,subStore.getSubscription())">
+    <button v-if="!user?.isfollowing" @click="() => follow(user!.username,subStore.getSubscription())">
       Follow
+    </button>
+    <button v-else @click="() => unfollow(user!.username)">
+      Unfollow
     </button>
     <FeedComponent :all-loaded="allLoaded" :posts="posts" @end-reached="expandPosts" @comment-created="commentAdded" />
   </div>
