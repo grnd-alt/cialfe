@@ -1,6 +1,6 @@
 export type User = {
-  followingcount: string
-  followers: string
+  followingcount: number,
+  followers: number,
   username: string
   isfollowing: boolean
 }
