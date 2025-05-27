@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { getPosts, getUser,follow,unfollow } from '@/api/api'
+import { follow, getPosts, getUser, unfollow } from '@/api/api'
+import UserTop from '@/components/users/UserTop.vue'
 import { useRoute } from 'vue-router'
 import { type PostData, type Comment } from '@/types/Post'
 import { ref } from 'vue'
@@ -14,7 +15,7 @@ const posts = ref<Array<PostData>>([])
 const user = ref<User>()
 const allLoaded = ref(false)
 
-const subStore = useSubscriptionStore()
+const substore = useSubscriptionStore()
 
 const expandPosts = () => {
   if (typeof route.params.username === 'string') {
@@ -30,6 +31,15 @@ const expandPosts = () => {
 }
 
 expandPosts()
+
+const loadUser = () => {
+  if (typeof route.params.username === 'string') {
+    getUser(route.params.username).then((res) => {
+      user.value = res.data
+    })
+  }
+}
+loadUser()
 
 if (typeof route.params.username === 'string') {
   getUser(route.params.username).then((res) => {
@@ -48,16 +58,9 @@ const commentAdded = (comment: Comment) => {
 }
 </script>
 <template>
-  <div>
-    {{ $route.params.username }}
-    Following: {{ user?.followingcount }}
-    Followers: {{ user?.followers || 0 }}
-    <button v-if="!user?.isfollowing" @click="() => follow(user!.username,subStore.getSubscription())">
-      Follow
-    </button>
-    <button v-else @click="() => unfollow(user!.username)">
-      Unfollow
-    </button>
+  <div v-if="user">
+    <UserTop :username="user!.username" :followers-count="user!.followers"
+       :following-count="user!.followingcount" :isFollowing="user!.isfollowing" @unfollow = "() => unfollow(user!.username).then(loadUser)" @follow="() => follow(user!.username, substore.getSubscription()).then(loadUser)" />
     <FeedComponent :all-loaded="allLoaded" :posts="posts" @end-reached="expandPosts" @comment-created="commentAdded" />
   </div>
 </template>
