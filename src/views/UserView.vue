@@ -3,7 +3,7 @@ import { follow, getPosts, getUser, unfollow } from '@/api/api'
 import UserTop from '@/components/users/UserTop.vue'
 import { useRoute } from 'vue-router'
 import { type PostData, type Comment } from '@/types/Post'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 import FeedComponent from '@/components/FeedComponent.vue'
 import type { User } from '@/types/User'
@@ -13,13 +13,22 @@ const route = useRoute()
 const pageNumber = ref(0)
 const posts = ref<Array<PostData>>([])
 const user = ref<User>()
+const username = ref<string>(route.params.username as string)
 const allLoaded = ref(false)
+
+watch(() => route.params.username, (newUsername) => {
+  username.value = newUsername as string
+  pageNumber.value = 0
+  posts.value = []
+  allLoaded.value = false
+  expandPosts()
+  loadUser()
+})
 
 const substore = useSubscriptionStore()
 
 const expandPosts = () => {
-  if (typeof route.params.username === 'string') {
-    getPosts(route.params.username, pageNumber.value).then((res) => {
+    getPosts(username.value, pageNumber.value).then((res) => {
       if (!res.data || res.data.length === 0) {
         allLoaded.value = true
         return
@@ -27,25 +36,16 @@ const expandPosts = () => {
       pageNumber.value++
       posts.value = posts.value.concat(res.data)
     })
-  }
 }
 
 expandPosts()
 
 const loadUser = () => {
-  if (typeof route.params.username === 'string') {
-    getUser(route.params.username).then((res) => {
+    getUser(username.value).then((res) => {
       user.value = res.data
     })
-  }
 }
 loadUser()
-
-if (typeof route.params.username === 'string') {
-  getUser(route.params.username).then((res) => {
-    user.value = res.data
-  })
-}
 
 const commentAdded = (comment: Comment) => {
   const postIndex = posts.value.findIndex((post) => post.Post.ID === comment.PostID)
