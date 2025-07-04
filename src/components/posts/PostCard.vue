@@ -94,7 +94,7 @@ const commentCreated = (comment: Comment) => {
 
 .post-card {
   cursor: pointer;
-  background-color: #f9f9f9;
+  background-color: var(--background-light);
   padding-top: 8px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

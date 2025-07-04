@@ -14,6 +14,10 @@ window.addEventListener('load', function () {
   })
 })
 
+
+const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+
 </script>
 
 <template>

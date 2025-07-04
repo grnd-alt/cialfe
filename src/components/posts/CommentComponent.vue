@@ -29,8 +29,7 @@ const userLink = `/user/${comment.UserName}`
   padding-right: 5px;
 }
 .comment {
-  border: 1px solid black;
-  border-radius: 8px;
+  border-top: 1px solid var(--background);
   padding: 4px;
   display: inline-flex;
   width: 100%;

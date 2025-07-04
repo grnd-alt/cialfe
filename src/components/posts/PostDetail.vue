@@ -59,13 +59,6 @@ const commentCreated = (comment: Comment) => {
   </ModalComponent>
 </template>
 <style scoped>
-.comment-input {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 5px;
-}
 
 .post-detail {
   text-align: center;
@@ -74,7 +67,7 @@ const commentCreated = (comment: Comment) => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .spinner {
@@ -117,6 +110,6 @@ img {
 
 .all-comments {
   padding: 10px;
-  margin-bottom: 15px;
+  /* margin-bottom: 15px; */
 }
 </style>
