@@ -2,7 +2,13 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import MeView from '../views/MeView.vue'
 
-const router = createRouter({
+/**
+ * we need this wrapper function as createWebHistory can not be called before keycloak finished
+ * Otherwise the #state is still in the url
+ * @returns the router object
+ */
+function makeRouter () {
+  return createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
@@ -30,5 +36,6 @@ const router = createRouter({
     },
   ],
 })
+}
 
-export default router
+export { makeRouter }
