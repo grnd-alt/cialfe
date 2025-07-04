@@ -139,6 +139,15 @@ function createComment(content: string, postId: string): Promise<AxiosResponse> 
     })
   })
 }
+function getCommentsByPost(postId: string, pageNumber = 0): Promise<AxiosResponse> {
+  return new Promise((resolve) => {
+    ensureAuth().then(() => {
+      axiosInstance
+        .get(`comments/${postId}?page=${pageNumber}`, { headers: { Authorization: `Bearer ${getToken()}` } })
+        .then((res) => resolve(res))
+    })
+  })
+}
 
 function deletePost(postId: string): Promise<AxiosResponse> {
   return new Promise((resolve) => {
@@ -161,6 +170,7 @@ export {
   createPost,
   getPosts,
   createComment,
+  getCommentsByPost,
   deletePost,
   getUser,
   follow,

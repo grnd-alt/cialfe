@@ -13,9 +13,9 @@ const userLink = `/user/${comment.UserName}`
 <template>
   <div class="comment">
     <RouterLink class="username" :to="userLink">
-      {{ comment.UserName }}
+      {{ comment.UserName }}:
     </RouterLink>
-    <div>
+    <div class="comment-content">
       {{ comment.Content }}
     </div>
   </div>
@@ -25,13 +25,17 @@ const userLink = `/user/${comment.UserName}`
   text-decoration: none;
   color: inherit;
   cursor: pointer;
-  font-size: 0.8rem;
   font-weight: bold;
+  padding-right: 5px;
 }
 .comment {
-  border-top: 1px solid black;
-  border-inline: 1px solid black;
+  border: 1px solid black;
   border-radius: 8px;
   padding: 4px;
+  display: inline-flex;
+  width: 100%;
+}
+.comment-content {
+  display: inline;
 }
 </style>

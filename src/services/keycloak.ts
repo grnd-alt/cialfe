@@ -32,4 +32,4 @@ const refresh = () => keycloak.updateToken();
 const getToken = () => keycloak.token;
 const isAuthenticated = () => keycloak.authenticated;
 
-export { initKeycloak, login, logout, getToken, isAuthenticated,refresh,keycloak };
+export { initKeycloak, login, logout, getToken, isAuthenticated, refresh, keycloak }
