@@ -7,7 +7,7 @@ import { getCommentsByPost } from '@/api/api';
 import CommentInput from './CommentInput.vue';
 
 const emit = defineEmits(['close', 'comment-created']);
-const {post} = defineProps<{
+const { post } = defineProps<{
   post: Post
 }>()
 
@@ -20,12 +20,13 @@ const endReached = ref<boolean>(false);
 const getNextPage = async () => {
   if (endReached.value) return; // Prevent further requests if end is reached
   try {
-    const response = await getCommentsByPost(post.ID, page.value);
-    if (response.data.comments && response.data.comments.length > 0) {
-      comments.value.push(...response.data.comments);
-    } else {
-      endReached.value = true;
-    }
+    getCommentsByPost(post.ID, page.value).then((response) => {
+      if (response.data.comments && response.data.comments.length > 0) {
+        comments.value.push(...response.data.comments);
+      } else {
+        endReached.value = true;
+      }
+    })
     page.value++
   } catch (error) {
     endReached.value = true;
@@ -49,11 +50,11 @@ const commentCreated = (comment: Comment) => {
       <div class="comment-box">
       </div>
       <div class="all-comments">
-        <CommentsList :comments @end-reached="getNextPage"/>
+        <CommentsList :comments @end-reached="getNextPage" />
       </div>
     </div>
     <div class="comment-input">
-        <CommentInput :post_id="post.ID" @comment-created="commentCreated" />
+      <CommentInput :post_id="post.ID" @comment-created="commentCreated" />
     </div>
   </ModalComponent>
 </template>
@@ -65,6 +66,7 @@ const commentCreated = (comment: Comment) => {
   width: 100%;
   padding: 5px;
 }
+
 .post-detail {
   text-align: center;
   /* height: 100%; */
@@ -74,6 +76,7 @@ const commentCreated = (comment: Comment) => {
   justify-content: space-between;
   overflow-y: scroll;
 }
+
 .spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-left-color: #000;
@@ -93,6 +96,7 @@ const commentCreated = (comment: Comment) => {
     transform: rotate(360deg);
   }
 }
+
 .post-card__image {
   display: flex;
   flex-direction: column;
