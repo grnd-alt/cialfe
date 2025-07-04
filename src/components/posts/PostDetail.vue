@@ -62,8 +62,6 @@ const commentCreated = (comment: Comment) => {
 
 .post-detail {
   text-align: center;
-  /* height: 100%; */
-  max-height: calc(60vh - 25px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;

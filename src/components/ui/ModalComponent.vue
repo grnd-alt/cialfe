@@ -72,7 +72,7 @@ onUnmounted(() => {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   min-width: 300px;
-  max-height: 60vh;
+  max-height: 80vh;
   height: fit-content;
   overflow-y: hidden;
   display: flex;
