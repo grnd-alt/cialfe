@@ -66,7 +66,7 @@ onUnmounted(() => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: white;
+  background: var(--background-light);
   padding-inline: 10px;
   padding-top: 30px;
   border-radius: 8px;
@@ -75,7 +75,8 @@ onUnmounted(() => {
   max-height: 60vh;
   height: fit-content;
   overflow-y: hidden;
-
+  display: flex;
+  flex-direction: column;
 }
 
 .close-button {

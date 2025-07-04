@@ -67,17 +67,18 @@ const hideMenu = () => {
   margin-right: 0.5rem;
   font-size: 1.2rem;
   font-weight: bold;
-  color: #333;
+  /* color: #333; */
 }
 
 .time {
   font-size: 0.9rem;
-  color: #888;
+  color: var(--text-secondary);
+  /* color: #888; */
 }
 
 .content {
   font-size: 1rem;
-  color: #555;
+  /* color: #555; */
   line-height: 1.5;
 }
 </style>
