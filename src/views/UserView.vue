@@ -17,6 +17,7 @@ const username = ref<string>(route.params.username as string)
 const allLoaded = ref(false)
 
 watch(() => route.params.username, (newUsername) => {
+  user.value = undefined
   username.value = newUsername as string
   pageNumber.value = 0
   posts.value = []

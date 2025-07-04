@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-const { username, content, createdAt, postId } = defineProps({
+const { username, content, createdAt, postId, showDots } = defineProps({
   username: { type: String, required: true },
   content: { type: String, required: true },
   createdAt: { type: String, required: true },
   postId: { type: String, required: true },
+  showDots: { type: Boolean, default: true }
 })
 import { useTimeAgo } from '@vueuse/core'
 import DotsMenuButton from '../ui/DotsMenuButton.vue'
@@ -38,7 +39,7 @@ const hideMenu = () => {
 
         <span class="time">{{ timeago }}</span>
       </div>
-      <DotsMenuButton :hide-menu="showMenu">
+      <DotsMenuButton :hide-menu="showMenu" v-if="showDots">
         <PostMenu :post-id="postId" @post-deleted="hideMenu"/>
       </DotsMenuButton>
     </div>
