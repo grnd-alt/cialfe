@@ -60,6 +60,7 @@ const addCommentHandle = (event: Event) => {
     width: 100%;
     min-height: 1.6rem;
     max-height: calc(1.6rem * 8);
+    font-size: 16px;
   }
 
   textarea:focus {
