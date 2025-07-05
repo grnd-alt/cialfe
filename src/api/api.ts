@@ -4,6 +4,10 @@ import { login, getToken, refresh, isAuthenticated } from '../services/keycloak'
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:8000/api/',
   timeout: 5000,
+  timeoutErrorMessage: 'Request timed out. Please try again later.',
+  validateStatus: (status) => {
+    return status >= 200 && status < 500 // Accept all 2xx and 4xx responses
+  }
 })
 
 async function ensureAuth(): Promise<boolean> {
@@ -92,13 +96,16 @@ function unfollow(userName: string): Promise<AxiosResponse> {
 }
 
 function createPost(post: { content: string; file: File }): Promise<AxiosResponse> {
-  return new Promise((resolve) => {
+  return new Promise((resolve,reject) => {
     ensureAuth().then(() => {
       axiosInstance
         .post('posts/create', post, {
           headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'multipart/form-data' },
         })
         .then((res) => resolve(res))
+        .catch((error) => {
+          reject(error)
+        })
     })
   })
 }

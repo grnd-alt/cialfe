@@ -11,6 +11,7 @@ defineProps<{
   followingCount: number
   followersCount: number
   isFollowing: boolean
+  isMe: boolean
 }>()
 
 </script>
@@ -24,7 +25,7 @@ defineProps<{
         <div class="user-name">
           {{ username }}
         </div>
-        <div class="user-follow-buttons">
+        <div v-if="!isMe" class="user-follow-buttons">
           <button v-if="!isFollowing" @click="$emit('follow')">Follow</button>
           <button v-else @click="$emit('unfollow')">Unfollow</button>
         </div>

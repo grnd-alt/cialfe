@@ -2,7 +2,6 @@
 import { getPosts } from '@/api/api'
 import { type PostData, type Comment } from '@/types/Post'
 import FeedComponent from '@/components/FeedComponent.vue'
-import CreatePost from '@/components/posts/CreatePost.vue'
 import { useMeStore, usePostStore } from '../stores/counter'
 import { ref, onUnmounted } from 'vue'
 
@@ -89,9 +88,6 @@ const postDeleted = (id: string) => {
 <template>
   <main>
     <div>
-      <h1>Me</h1>
-      <p v-if="me && me.preferred_username">Hello, {{ me.preferred_username }}!</p>
-      <CreatePost />
       <FeedComponent
         :all-loaded="endReached"
         :posts="posts"
