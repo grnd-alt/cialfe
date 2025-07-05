@@ -4,10 +4,10 @@ import { getMe, getPosts, updateBrowserData } from '@/api/api'
 import type { PostData } from '@/types/Post'
 
 type Me = {
-  sub: string,
-  preferred_username: string,
-  email: string,
-  exp: number,
+  sub: string
+  preferred_username: string
+  email: string
+  exp: number
 }
 
 export const useSubscriptionStore = defineStore('subscription', {
@@ -19,30 +19,29 @@ export const useSubscriptionStore = defineStore('subscription', {
     },
     getSubscription(): PushSubscription | null {
       return this.subscription
-    }
+    },
   },
 })
 
-
-export const useMeStore = defineStore("me", {
+export const useMeStore = defineStore('me', {
   state: () => ({ me: null as Me | null }),
   actions: {
-    async getMe():Promise<Me | undefined> {
+    async getMe(): Promise<Me> {
       if (!this.me) {
         this.me = (await getMe()).data
       }
-      return (this.me as Me)
-    }
+      return this.me as Me
+    },
   },
 })
 
-export const usePostStore = defineStore('posts',{
+export const usePostStore = defineStore('posts', {
   state: () => ({ mePosts: [] as PostData[] }),
   actions: {
-    async getMePosts():Promise<PostData[]> {
+    async getMePosts(): Promise<PostData[]> {
       const meStore = useMeStore()
       if (!this.mePosts.length) {
-        this.mePosts = (await getPosts((await meStore.getMe())!.preferred_username,0)).data
+        this.mePosts = (await getPosts((await meStore.getMe())!.preferred_username, 0)).data
       }
       return this.mePosts
     },
@@ -52,9 +51,8 @@ export const usePostStore = defineStore('posts',{
     addPost(post: PostData) {
       this.mePosts.unshift(post)
     },
-  }
-}
-)
+  },
+})
 
 export const useCounterStore = defineStore('counter', () => {
   const count = ref(0)
