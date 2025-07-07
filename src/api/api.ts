@@ -3,7 +3,6 @@ import { login, getToken, refresh, isAuthenticated } from '../services/keycloak'
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:8000/api/',
-  timeout: 5000,
   timeoutErrorMessage: 'Request timed out. Please try again later.',
   validateStatus: (status) => {
     return status >= 200 && status < 500 // Accept all 2xx and 4xx responses
