@@ -5,6 +5,7 @@ import CommentComponent from './CommentComponent.vue'
 import { ref } from 'vue';
 import PostDetail from './PostDetail.vue';
 import CommentInput from './CommentInput.vue';
+import PostMedia from './PostMedia.vue';
 
 
 
@@ -21,14 +22,13 @@ const { post, comments } = defineProps({
   }
 })
 
-const imageLoaded = ref<boolean>(false)
 const showDetail = ref<boolean>(false)
 
 const postDeleted = () => {
   emit("post-deleted")
 }
 
-const postClicked = () => {
+const showDetails = () => {
   showDetail.value = true
 }
 const commentCreated = (comment: Comment) => {
@@ -38,25 +38,36 @@ const commentCreated = (comment: Comment) => {
 </script>
 <template>
   <div>
-    <div class="post-card" >
+    <div class="post-card">
       <PostHeader class="header" :username="post.Username" :content="post.Content" :created-at="post.CreatedAt"
         :post-id="post.ID" @post-deleted="postDeleted" />
-      <div class="post-card__image" @click="postClicked">
-        <div v-if="!imageLoaded" class="spinner"></div>
-        <img :src="post.Filepath" alt="post image not loaded" @load="imageLoaded = true" />
+      <div class="post-card__image">
+        <PostMedia :url="post.Filepath" />
       </div>
-      <CommentInput :post_id="post.ID" @comment-created="commentCreated"/>
+      <CommentInput :post_id="post.ID" @comment-created="commentCreated" />
       <div class="comments">
-        <div v-for="comment in comments" :key="comment.ID">
+        <div v-for="comment in (comments ? comments.slice(0,2) : [])" :key="comment.ID">
           <CommentComponent :comment="comment" />
         </div>
       </div>
+      <div class="comment-more" v-if="comments?.length > 2" @click="showDetails">
+        <span>more...</span>
+      </div>
     </div>
-    <PostDetail v-if="showDetail" @close="showDetail=false" :post @comment-created="commentCreated"/>
+    <PostDetail v-if="showDetail" @close="showDetail = false" :post @comment-created="commentCreated" />
   </div>
 </template>
 
 <style scoped>
+.comment-more {
+  padding: 4px;
+  span {
+    cursor: pointer;
+    color: var(--text-secondary);
+
+  }
+}
+
 .spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-left-color: #000;

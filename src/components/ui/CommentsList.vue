@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
 import { type Comment } from '@/types/Post';
 import CommentComponent from '../posts/CommentComponent.vue';
 import { vElementVisibility } from '@vueuse/components'

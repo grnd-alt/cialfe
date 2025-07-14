@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import type { Post, PostData } from '@/types/Post';
-import { defineProps, ref } from 'vue';
-import { defineEmits } from 'vue';
+import { defineEmits, ref } from 'vue';
 import { vElementVisibility } from '@vueuse/components'
 import PostDetail from './posts/PostDetail.vue';
+import PostMedia from './posts/PostMedia.vue';
 
 const emit = defineEmits(['end-reached']);
 
@@ -27,7 +27,7 @@ const openDetailView = (post: PostData) => {
 <template>
   <div class="grid-feed">
     <div class="post" v-for="(post, index) in posts" :key="post.Post.ID" @click="() => openDetailView(post)">
-      <img :src="post.Post.Filepath" alt="post image not loaded" class="post-image" />
+      <PostMedia :url="post.Post.Filepath" :controls="false" class="post-image" />
       <div v-if="index >= posts.length - 2">
         <div v-element-visibility="onElementVisibility"></div>
       </div>
@@ -36,7 +36,7 @@ const openDetailView = (post: PostData) => {
       </div>
     </div>
 
-    <PostDetail v-if="detailPost" @close="detailPost = null" :post="detailPost" @comment-created="() => {}"/>
+    <PostDetail v-if="detailPost" @close="detailPost = null" :post="detailPost" @comment-created="() => { }" />
   </div>
 </template>
 
@@ -53,12 +53,13 @@ const openDetailView = (post: PostData) => {
   position: relative;
   overflow: hidden;
 }
+
 .post-image {
   width: 100%;
   height: 100%;
   display: block;
-  aspect-ratio: 1 / 1; /* Ensures square aspect ratio */
+  aspect-ratio: 1 / 1;
+  /* Ensures square aspect ratio */
   object-fit: cover;
 }
-
 </style>

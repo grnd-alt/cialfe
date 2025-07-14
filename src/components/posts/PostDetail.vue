@@ -5,13 +5,12 @@ import { type Post, type Comment } from '@/types/Post';
 import CommentsList from '../ui/CommentsList.vue';
 import { getCommentsByPost } from '@/api/api';
 import CommentInput from './CommentInput.vue';
+import PostMedia from './PostMedia.vue';
 
 const emit = defineEmits(['close', 'comment-created']);
 const { post } = defineProps<{
   post: Post
 }>()
-
-const imageLoaded = ref<boolean>(false)
 
 const comments = ref<Comment[]>([]);
 const page = ref<number>(0);
@@ -44,8 +43,7 @@ const commentCreated = (comment: Comment) => {
   <ModalComponent @close="$emit('close')">
     <div class="post-detail">
       <div class="post-card__image">
-        <div v-if="!imageLoaded" class="spinner"></div>
-        <img :src="post.Filepath" alt="post image not loaded" @load="imageLoaded = true" />
+        <PostMedia :url="post.Filepath" autoplay />
       </div>
       <div class="comment-box">
       </div>

@@ -6,7 +6,7 @@ const axiosInstance = axios.create({
   timeoutErrorMessage: 'Request timed out. Please try again later.',
   validateStatus: (status) => {
     return status >= 200 && status < 500 // Accept all 2xx and 4xx responses
-  }
+  },
 })
 
 async function ensureAuth(): Promise<boolean> {
@@ -21,13 +21,17 @@ async function ensureAuth(): Promise<boolean> {
   }
 }
 
-function getVapiKey(): Promise<AxiosResponse>{
+export function getMedia(imageUrl: string): Promise<AxiosResponse> {
   return new Promise((resolve) => {
-    axiosInstance
-      .get('vapid')
-      .then((res) => {
-        resolve(res)
-      })
+    axiosInstance.get(imageUrl, {responseType: 'blob'}).then((res) => resolve(res))
+  })
+}
+
+function getVapiKey(): Promise<AxiosResponse> {
+  return new Promise((resolve) => {
+    axiosInstance.get('vapid').then((res) => {
+      resolve(res)
+    })
   })
 }
 
@@ -95,7 +99,7 @@ function unfollow(userName: string): Promise<AxiosResponse> {
 }
 
 function createPost(post: { content: string; file: File }): Promise<AxiosResponse> {
-  return new Promise((resolve,reject) => {
+  return new Promise((resolve, reject) => {
     ensureAuth().then(() => {
       axiosInstance
         .post('posts/create', post, {
@@ -149,7 +153,9 @@ function getCommentsByPost(postId: string, pageNumber = 0): Promise<AxiosRespons
   return new Promise((resolve) => {
     ensureAuth().then(() => {
       axiosInstance
-        .get(`comments/${postId}?page=${pageNumber}`, { headers: { Authorization: `Bearer ${getToken()}` } })
+        .get(`comments/${postId}?page=${pageNumber}`, {
+          headers: { Authorization: `Bearer ${getToken()}` },
+        })
         .then((res) => resolve(res))
     })
   })
