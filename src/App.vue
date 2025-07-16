@@ -2,8 +2,9 @@
 import { RouterView } from 'vue-router'
 import NotificationsButton from './components/NotificationsButton.vue'
 import NavBar from './components/NavBar.vue'
+import { onMounted } from 'vue'
 
-window.addEventListener('load', function () {
+onMounted(() => {
   navigator.serviceWorker.register('/service-worker.js').then((registration) => {
     console.log('Service Worker registered with scope:', registration.scope)
   }).catch((error) => {
