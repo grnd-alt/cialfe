@@ -116,17 +116,7 @@ const commentCreated = (comment: Comment) => {
 .post-card__image {
   display: flex;
   flex-direction: column;
-  max-height: 400px;
   max-width: 100%;
 }
 
-img {
-  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
-  display: block;
-  object-fit: cover;
-  max-height: inherit;
-  max-width: inherit;
-  width: auto;
-  height: auto;
-}
 </style>

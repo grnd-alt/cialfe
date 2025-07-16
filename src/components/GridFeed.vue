@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Post, PostData } from '@/types/Post';
-import { defineEmits, ref } from 'vue';
+import { ref } from 'vue';
 import { vElementVisibility } from '@vueuse/components'
 import PostDetail from './posts/PostDetail.vue';
 import PostMedia from './posts/PostMedia.vue';

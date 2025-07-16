@@ -8,6 +8,7 @@ import { computed, ref, watch } from 'vue'
 import type { User } from '@/types/User'
 import { useMeStore, useSubscriptionStore } from '@/stores/counter'
 import GridFeed from '@/components/GridFeed.vue'
+import NotificationTester from '@/components/NotificationTester.vue'
 
 const route = useRoute()
 const pageNumber = ref(0)
@@ -77,6 +78,9 @@ const commentAdded = (comment: Comment) => {
 </script>
 <template>
   <div v-if="user">
+  <div v-if="isMe" class="notification-testing">
+    <NotificationTester />
+  </div>
     <UserTop :isMe :username="user!.username" :followers-count="user!.followers" :following-count="user!.followingcount"
       :isFollowing="user!.isfollowing" @unfollow="() => unfollow(user!.username).then(loadUser)"
       @follow="() => follow(user!.username, substore.getSubscription()).then(loadUser)" />

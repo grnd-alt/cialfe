@@ -20,6 +20,15 @@ async function ensureAuth(): Promise<boolean> {
     return await Promise.reject(error)
   }
 }
+export async function notifyMe(): Promise<AxiosResponse> {
+  return new Promise((resolve) => {
+    ensureAuth().then(() => {
+      axiosInstance.post('users/notifyme',{}, {headers: {Authorization: `Bearer ${getToken()}`}}).then((res) => {
+        resolve(res)
+      })
+  })
+})
+}
 
 export function getMedia(imageUrl: string): Promise<AxiosResponse> {
   return new Promise((resolve) => {
