@@ -26,6 +26,8 @@ meStore.getMe().then((res) =>
   me.value = res
 )
 
+const expandingPosts = ref(false)
+
 watch(me, () => {
   if (!route.params.username) {
     username.value = me.value.preferred_username
@@ -47,6 +49,10 @@ watch(() => route.params.username, (newUsername) => {
 const substore = useSubscriptionStore()
 
 const expandPosts = () => {
+  if (expandingPosts.value === true) {
+    return
+  }
+  expandingPosts.value = true
   getPosts(username.value, pageNumber.value).then((res) => {
     if (!res.data || res.data.length === 0) {
       allLoaded.value = true
@@ -54,17 +60,17 @@ const expandPosts = () => {
     }
     pageNumber.value++
     posts.value = posts.value.concat(res.data)
+  }).finally(() => {
+    expandingPosts.value = false
   })
 }
 
-// expandPosts()
 
 const loadUser = () => {
   getUser(username.value).then((res) => {
     user.value = res.data
   })
 }
-// loadUser()
 
 const commentAdded = (comment: Comment) => {
   const postIndex = posts.value.findIndex((post) => post.Post.ID === comment.PostID)
