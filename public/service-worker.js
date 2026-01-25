@@ -1,11 +1,34 @@
+self.addEventListener('notificationclick', function (event) {
+  event.notification.close();
+
+  const url = event.notification.data?.url || '/';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      for (const client of clientList) {
+        if (client.url === url && 'focus' in client) {
+          return client.focus();
+        }
+      }
+
+      if (clients.openWindow) {
+        return clients.openWindow(url);
+      }
+    })
+  );
+});
+
 self.addEventListener('push',function(event) {
-  self.registration.showNotification(event.data.text(),{})
+  const data = event.data.json();
+  let url = "/me"
+  if (data.type === "newPost") {
+    url = "/user/"+data.data.author
+  }
+  self.registration.showNotification(data.title,{body: data.body, data: {url: url}})
 })
 self.addEventListener('message', function(event) {
-  self.registration.showNotification(event.data.message,{})
-})
-self.addEventListener('notificationclick', function() {
-  console.log("HELLO WORLD")
+  const data = event.json;
+  self.registration.showNotification(data.title,{message: data.body})
 })
 
 self.addEventListener('install', event => {
