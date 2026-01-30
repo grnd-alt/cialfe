@@ -14,12 +14,11 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { addEvent, getCounter } from '@/api/counter';
-import type { Counter } from '@/types/Counter';
 
 const route = useRoute();
 const counterID = Number(route.params.counterID);
 
-const counter = ref<Counter | null>(null);
+const counter = ref<any>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
 
