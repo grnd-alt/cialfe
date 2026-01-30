@@ -34,6 +34,11 @@ function makeRouter() {
         component: () => import('../views/AboutView.vue'),
       },
       {
+        path: '/counter/:counterID/addEvent',
+        name: 'addEvent',
+        component: () => import('../views/AddCounterEventView.vue'),
+      },
+      {
         path: '/create',
         name: 'create',
         component: () => import('../components/posts/CreatePost.vue'),
