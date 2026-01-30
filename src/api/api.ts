@@ -1,7 +1,8 @@
 import axios, { type AxiosResponse } from 'axios'
 import { login, getToken, refresh, isAuthenticated } from '../services/keycloak'
+import type { UserSearchResult } from '@/types/User'
 
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
   baseURL: 'http://localhost:8000/api/',
   timeoutErrorMessage: 'Request timed out. Please try again later.',
   validateStatus: (status) => {
@@ -9,7 +10,7 @@ const axiosInstance = axios.create({
   },
 })
 
-async function ensureAuth(): Promise<boolean> {
+export async function ensureAuth(): Promise<boolean> {
   if (!isAuthenticated()) {
     login()
   }
@@ -26,8 +27,26 @@ export async function notifyMe(): Promise<AxiosResponse> {
       axiosInstance.post('users/notifyme',{}, {headers: {Authorization: `Bearer ${getToken()}`}}).then((res) => {
         resolve(res)
       })
+    })
   })
-})
+}
+
+export async function findUsers(query: string): Promise<UserSearchResult[]> {
+  return new Promise((resolve, reject) => {
+    ensureAuth().then(() => {
+      axiosInstance
+        .get('user/find', {
+          params: { query },
+          headers: { Authorization: `Bearer ${getToken()}` },
+        })
+        .then((res) => {
+          if (res.status !== 200) {
+            reject(res.data)
+          }
+          resolve(res.data)
+        })
+    })
+  })
 }
 
 export function getMedia(imageUrl: string): Promise<AxiosResponse> {

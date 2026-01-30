@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { follow, getPosts, getUser, unfollow } from '@/api/api'
 import UserTop from '@/components/users/UserTop.vue'
+import CounterList from '@/components/users/CounterList.vue'
 import { useRoute } from 'vue-router'
 import { type PostData, type Comment } from '@/types/Post'
 import { computed, ref, watch } from 'vue'
@@ -8,7 +9,6 @@ import { computed, ref, watch } from 'vue'
 import type { User } from '@/types/User'
 import { useMeStore, useSubscriptionStore } from '@/stores/counter'
 import GridFeed from '@/components/GridFeed.vue'
-import NotificationTester from '@/components/NotificationTester.vue'
 
 const route = useRoute()
 const pageNumber = ref(0)
@@ -84,12 +84,13 @@ const commentAdded = (comment: Comment) => {
 </script>
 <template>
   <div v-if="user">
-  <div v-if="isMe" class="notification-testing">
+  <!-- <div v-if="isMe" class="notification-testing">
     <NotificationTester />
-  </div>
+  </div> -->
     <UserTop :isMe :username="user!.username" :followers-count="user!.followers" :following-count="user!.followingcount"
       :isFollowing="user!.isfollowing" @unfollow="() => unfollow(user!.username).then(loadUser)"
       @follow="() => follow(user!.username, substore.getSubscription()).then(loadUser)" />
+    <CounterList :user-i-d="username" :is-me="isMe"/>
     <GridFeed :all-loaded="allLoaded" :posts="posts" @end-reached="expandPosts" @comment-created="commentAdded" />
   </div>
 </template>

@@ -56,7 +56,7 @@ onUnmounted(() => {
   left: 0;
   width: 100vw;
   height: 100vh;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
   z-index: 1000;
   background-color: rgba(0, 0, 0, 0.5);
 }
@@ -75,7 +75,7 @@ onUnmounted(() => {
   width: 90vw;
   max-height: 80vh;
   height: fit-content;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
   display: flex;
   flex-direction: column;
 }
