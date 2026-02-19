@@ -84,13 +84,10 @@ const commentAdded = (comment: Comment) => {
 </script>
 <template>
   <div v-if="user">
-  <!-- <div v-if="isMe" class="notification-testing">
-    <NotificationTester />
-  </div> -->
     <UserTop :isMe :username="user!.username" :followers-count="user!.followers" :following-count="user!.followingcount"
       :isFollowing="user!.isfollowing" @unfollow="() => unfollow(user!.username).then(loadUser)"
       @follow="() => follow(user!.username, substore.getSubscription()).then(loadUser)" />
-    <CounterList :user-i-d="username" :is-me="isMe"/>
+    <CounterList :user-i-d="username" :is-me="isMe" />
     <GridFeed :all-loaded="allLoaded" :posts="posts" @end-reached="expandPosts" @comment-created="commentAdded" />
   </div>
 </template>

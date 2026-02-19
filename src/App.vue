@@ -1,8 +1,52 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import { computed, nextTick, onMounted, ref } from 'vue'
+import { RouterView, useRoute } from 'vue-router'
 import NotificationsButton from './components/NotificationsButton.vue'
 import NavBar from './components/NavBar.vue'
-import { onMounted } from 'vue'
+
+type NavTarget = 'home' | 'create' | 'me'
+
+const route = useRoute()
+const defaultKeepAliveInclude = ['HomeView', 'UserView']
+const keepAliveInclude = ref([...defaultKeepAliveInclude])
+const refreshTokens = ref<Record<NavTarget, number>>({
+  home: 0,
+  create: 0,
+  me: 0,
+})
+
+// need this so the component changes and re-renders
+const componentRenderKey = computed(() => {
+  const routeName = String(route.name ?? 'unknown')
+  const token = route.name === 'home'
+    ? refreshTokens.value.home
+    : route.name === 'create'
+      ? refreshTokens.value.create
+      : route.name === 'me'
+        ? refreshTokens.value.me
+        : 0
+
+  return `${routeName}:${route.path}:${token}`
+})
+
+async function handleRefreshActiveRoute(target: NavTarget) {
+  refreshTokens.value[target] += 1
+
+  const keepAliveNameByTarget: Record<NavTarget, string | undefined> = {
+    home: 'HomeView',
+    create: undefined,
+    me: 'UserView',
+  }
+
+  const componentName = keepAliveNameByTarget[target]
+  if (!componentName) {
+    return
+  }
+
+  keepAliveInclude.value = defaultKeepAliveInclude.filter((name) => name !== componentName)
+  await nextTick()
+  keepAliveInclude.value = [...defaultKeepAliveInclude]
+}
 
 onMounted(() => {
   navigator.serviceWorker.register('/service-worker.js').then((registration) => {
@@ -25,10 +69,14 @@ document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light
     </div>
   </header>
   <main class="main-content">
-    <RouterView />
+      <RouterView v-slot="{Component}">
+        <KeepAlive :include="keepAliveInclude">
+          <component :is="Component" :key="componentRenderKey" />
+        </KeepAlive>
+      </RouterView>
   </main>
   <footer>
-    <NavBar />
+    <NavBar @refresh-active-route="handleRefreshActiveRoute" />
   </footer>
 </template>
 

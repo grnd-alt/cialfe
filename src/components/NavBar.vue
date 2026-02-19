@@ -2,17 +2,56 @@
 // @ts-expect-error lib has no types
 import SVGIcon from '@jamescoyle/vue-icon';
 import { mdiHome, mdiAccount, mdiPlusCircle } from '@mdi/js';
+
+type NavTarget = 'home' | 'create' | 'me';
+
+const emit = defineEmits<{
+  (event: 'refresh-active-route', target: NavTarget): void;
+}>();
+
+function handleNavClick(
+  event: MouseEvent,
+  target: NavTarget,
+  isExactActive: boolean,
+  navigate: (event?: MouseEvent) => void,
+) {
+  if (isExactActive) {
+    event.preventDefault();
+    emit('refresh-active-route', target);
+    return;
+  }
+
+  navigate(event);
+}
 </script>
 <template>
   <nav class="navbar">
-    <router-link to="/" activeClass="router-link-active">
-      <SVGIcon class="nav-icon" type="mdi" :path="mdiHome" size="24" />
+    <router-link to="/" custom v-slot="{ href, navigate, isExactActive }">
+      <a
+        :href="href"
+        :class="{ 'router-link-active': isExactActive }"
+        @click="handleNavClick($event, 'home', isExactActive, navigate)"
+      >
+        <SVGIcon class="nav-icon" type="mdi" :path="mdiHome" size="24" />
+      </a>
     </router-link>
-    <router-link to="/create" activeClass="router-link-active">
-      <SVGIcon type="mdi" :path="mdiPlusCircle" size="24" />
+    <router-link to="/create" custom v-slot="{ href, navigate, isExactActive }">
+      <a
+        :href="href"
+        :class="{ 'router-link-active': isExactActive }"
+        @click="handleNavClick($event, 'create', isExactActive, navigate)"
+      >
+        <SVGIcon type="mdi" :path="mdiPlusCircle" size="24" />
+      </a>
     </router-link>
-    <router-link to="/me" activeClass="router-link-active">
-      <SVGIcon type="mdi" :path="mdiAccount" size="24" />
+    <router-link to="/me" custom v-slot="{ href, navigate, isExactActive }">
+      <a
+        :href="href"
+        :class="{ 'router-link-active': isExactActive }"
+        @click="handleNavClick($event, 'me', isExactActive, navigate)"
+      >
+        <SVGIcon type="mdi" :path="mdiAccount" size="24" />
+      </a>
     </router-link>
   </nav>
 </template>
