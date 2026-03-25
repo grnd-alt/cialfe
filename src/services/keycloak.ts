@@ -10,6 +10,8 @@ const keycloak = new Keycloak(keycloakConfig)
 const initOptions = {
   onLoad: 'check-sso' as KeycloakOnLoad,
   pkceMethod: 'S256' as KeycloakPkceMethod,
+  // Use iframe for SSO check - faster than full page redirect
+  silentCheckSsoRedirectUri: `${window.location.origin}/silent-check-sso.html`,
 }
 
 const initKeycloak = () => {
