@@ -9,9 +9,8 @@ import { initKeycloak } from './services/keycloak'
 
 const app = createApp(App)
 
-initKeycloak().then(() => {
-  app.use(createPinia())
-  app.use(makeRouter())
+app.use(createPinia())
+app.use(makeRouter())
+app.mount('#app')
 
-  app.mount('#app')
-})
+initKeycloak()

@@ -9,7 +9,12 @@
     <title>Cialfe</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <!-- Shown immediately on first HTTP response, replaced when Vue mounts -->
+      <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+        Loading...
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

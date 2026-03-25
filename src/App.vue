@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, ref } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import NotificationsButton from './components/NotificationsButton.vue'
 import NavBar from './components/NavBar.vue'
+import { isAuthReady } from './services/keycloak'
 
 type NavTarget = 'home' | 'create' | 'me'
 
@@ -63,6 +64,8 @@ document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light
 </script>
 
 <template>
+  <div v-if="!isAuthReady" class="loading-screen">Loading...</div>
+  <template v-else>
   <header>
     <div class="account-section">
       <NotificationsButton />
@@ -78,6 +81,7 @@ document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light
   <footer>
     <NavBar @refresh-active-route="handleRefreshActiveRoute" />
   </footer>
+  </template>
 </template>
 
 <style scoped>
@@ -112,8 +116,11 @@ footer {
   margin-top: auto;
   width: 100%;
   height: 3.5rem;
-  /* Optional: add background or border for visibility */
-  /* background: var(--background-light); */
-  /* border-top: 1px solid #eee; */
+}
+.loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 </style>

@@ -1,4 +1,7 @@
 import Keycloak, { type KeycloakOnLoad, type KeycloakPkceMethod } from 'keycloak-js'
+import { ref } from 'vue'
+
+const isAuthReady = ref(false)
 
 const keycloakConfig = {
   url: 'http://localhost:8080',
@@ -19,10 +22,12 @@ const initKeycloak = () => {
     keycloak
       .init(initOptions)
       .then((authenticated) => {
+        isAuthReady.value = true
         resolve(authenticated)
       })
       .catch((error) => {
         console.error('failed to init keycloak', error)
+        isAuthReady.value = true
         reject(error)
       })
   })
@@ -34,4 +39,4 @@ const refresh = () => keycloak.updateToken();
 const getToken = () => keycloak.token;
 const isAuthenticated = () => keycloak.authenticated;
 
-export { initKeycloak, login, logout, getToken, isAuthenticated, refresh, keycloak }
+export { initKeycloak, login, logout, getToken, isAuthenticated, refresh, keycloak, isAuthReady }
