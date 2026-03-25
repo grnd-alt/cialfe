@@ -199,14 +199,9 @@ function deletePost(postId: string): Promise<AxiosResponse> {
   })
 }
 
-function getHello() {
-  return axiosInstance.get('hello')
-}
-
 export {
   getLatest,
   getMe,
-  getHello,
   createPost,
   getPosts,
   createComment,
