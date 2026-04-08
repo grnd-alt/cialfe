@@ -5,21 +5,25 @@
         <SVGIcon class="collapse-button" type="mdi" :path="isExpanded ? mdiChevronDown : mdiChevronRight" :size="24" />
         <h3 class="header-title">Counters</h3>
       </div>
-      <SVGIcon v-if="isMe" @click="showCounterForm = true" class="add-button" type="mdi" :path="mdiPlusCircleOutline" :size="24" />
+      <SVGIcon v-if="isMe" @click="showCounterForm = true" class="add-button" type="mdi" :path="mdiPlusCircleOutline"
+        :size="24" />
     </div>
     <div v-if="isExpanded" class="counter-items">
-      <div v-for="count in counters" :key="count.ID" class="counter-item">
+      <div v-for="count in counters" :key="count.ID" class="counter-item" @click="showCounterEdit = count.ID">
         <div class="counter-left">
           <div class="counter-icon">{{ count.Icon }}</div>
           <div class="counter-name">{{ count.Name }}</div>
         </div>
         <div class="counter-right">
           <div class="counter-count">{{ count.EntryCount }}</div>
-          <SVGIcon v-if="isMe" @click="record(count.ID)" class="add-button" type="mdi" :path="mdiPlusCircleOutline" :size="25" />
+          <SVGIcon v-if="isMe" @click.stop="record(count.ID)" class="add-button" type="mdi" :path="mdiPlusCircleOutline"
+            :size="25" />
         </div>
+        <CounterEdit v-if="showCounterEdit === count.ID" @click.stop @close="showCounterEdit = null"
+          @success="onPostEdited" :counter-id="count.ID" />
       </div>
     </div>
-    <CounterForm v-if="showCounterForm" @close="showCounterForm=false" @success="onPostAdded"/>
+    <CounterForm v-if="showCounterForm" @close="showCounterForm = false" @success="onPostAdded" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -30,7 +34,7 @@ import { ref, onMounted } from 'vue';
 import SVGIcon from '@jamescoyle/vue-icon';
 import { mdiPlusCircleOutline, mdiChevronDown, mdiChevronRight } from '@mdi/js';
 import CounterForm from './CounterForm.vue';
-
+import CounterEdit from './CounterEdit.vue';
 const { isMe, userID } = defineProps({
   isMe: {
     type: Boolean,
@@ -44,6 +48,7 @@ const { isMe, userID } = defineProps({
 
 const counters = ref<Counter[]>([])
 const showCounterForm = ref(false)
+const showCounterEdit = ref<number | null>(null)
 const isExpanded = ref(true)
 
 const onPostAdded = (counter: Counter) => {
@@ -51,8 +56,18 @@ const onPostAdded = (counter: Counter) => {
   showCounterForm.value = false
 }
 
+const onPostEdited = (updatedCounter?: Counter) => {
+  if (updatedCounter) {
+    const index = counters.value.findIndex(c => c.ID === updatedCounter.ID)
+    if (index !== -1) {
+      counters.value[index] = updatedCounter
+    }
+  }
+  showCounterEdit.value = null
+}
+
 onMounted(() => {
-  getCounters(userID).then((res:Counter[] | null) => {
+  getCounters(userID).then((res: Counter[] | null) => {
     if (!res) {
       counters.value = []
       return
@@ -118,11 +133,13 @@ const record = (id: number) => {
   gap: 9px;
   padding: 8px 0;
 }
+
 .counter-left {
   display: flex;
   align-items: center;
   gap: 9px;
 }
+
 .counter-right {
   display: flex;
   align-items: center;
@@ -169,5 +186,4 @@ const record = (id: number) => {
   justify-content: center;
   transition: transform 0.2s ease;
 }
-
 </style>

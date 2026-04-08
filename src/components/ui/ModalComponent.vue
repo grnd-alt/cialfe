@@ -20,13 +20,14 @@ function handleBackdropClick(event: MouseEvent) {
 let trap: FocusTrap | null = null;
 onMounted(() => {
   document.body.style.overflow = 'hidden'
-  if (!trap) {
+  if (!trap && modal.value) {
     trap = createFocusTrap(modal.value, {
+      allowOutsideClick: true,
       initialFocus: false,
       fallbackFocus: modal.value
     })
   }
-  trap.activate()
+  trap?.activate()
 
 })
 

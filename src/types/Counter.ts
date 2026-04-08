@@ -1,10 +1,10 @@
-import type { User } from "./User"
+import type { UserInCounter } from "./User"
 
 export type Counter = {
   ID: number,
   Name: string,
   Icon: string,
   EntryCount: number,
-  Users?: User[]
+  Users?: UserInCounter[]
   EventCreatedAt?: string
 }

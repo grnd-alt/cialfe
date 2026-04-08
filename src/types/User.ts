@@ -9,3 +9,10 @@ export type User = {
   username: string
   isfollowing: boolean
 }
+
+export type UserInCounter = {
+  AccessType: string,
+  EntryCount: number,
+  Username: string,
+  UserID: string
+}
