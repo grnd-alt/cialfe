@@ -1,0 +1,36 @@
+name: Build and Publish
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: docker
+    container:
+      image: node:22-alpine
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Create release archive
+        run: |
+          apk add --no-cache curl tar
+          tar -czvf dist.tar.gz -C dist .
+
+      - name: Publish to Generic Package Registry
+        if: github.ref == 'refs/heads/main'
+        run: |
+          VERSION=${GITHUB_SHA::7}
+          curl --fail --user "${{ github.repository_owner }}:${{ secrets.REGISTRY_TOKEN }}" \
+               --upload-file dist.tar.gz \
+               "https://codeberg.org/api/packages/${{ github.repository_owner }}/generic/cialfe/${VERSION}/dist.tar.gz"
